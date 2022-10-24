@@ -7,4 +7,4 @@
 
 
 ## Model_bazy_danych
-![db_schema](https://user-images.githubusercontent.com/77066615/197392246-f89ab10b-f442-465b-bf72-400611725f4a.png)
+![db_schema](https://github.com/SzWielgosz/PSI/blob/main/db_schema.png)
