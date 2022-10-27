@@ -15,7 +15,7 @@ class Worker(models.Model):
     phoneNumber = models.IntegerField(max_length=9, null=False)
     email = models.CharField(100)
     pesel = models.IntegerField(9)
-    idAdres = models.ForeignKey(WorkerAddress, on_delete=models.CASCADE)
+    workerAddress = models.ForeignKey(WorkerAddress, on_delete=models.CASCADE)
 
 
 class Shift(models.Model):
@@ -25,5 +25,5 @@ class Shift(models.Model):
 
 
 class ShiftAssignment(models.Model):
-    idWorker = models.ForeignKey(Worker, on_delete=models.CASCADE)
-    idShift = models.ForeignKey(Shift, on_delete=models.CASCADE)
+    worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
