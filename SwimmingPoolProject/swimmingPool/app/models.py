@@ -48,7 +48,7 @@ class ClientAdress(models.Model):
 class Client(models.Model):
     name = models.CharField(max_length=45, null=False)
     surname = models.CharField(max_length=45, null=False)
-    phoneNumber = models.CharField(max_length=9, null=False)
+    phoneNumber = models.IntegerField(max_length=9, null=False)
     email = models.CharField(max_length=100)
     pesel = models.IntegerField(max_length=11, null=False)
     adress = models.ForeignKey(ClientAdress, on_delete=models.CASCADE)
