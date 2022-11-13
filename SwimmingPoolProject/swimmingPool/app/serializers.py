@@ -9,7 +9,8 @@ class WorkerAddressSerializer(serializers.HyperlinkedModelSerializer):
             'houseNumber',
             'flatNumber',
             'postcode',
-            'placeName'
+            'placeName',
+            'worker'
         ]
 
 class WorkerSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,8 +21,7 @@ class WorkerSerializer(serializers.HyperlinkedModelSerializer):
             'surname',
             'phoneNumber',
             'email',
-            'pesel',
-            'workerAddress'
+            'pesel'
         ]
 
 class ShiftSerializer(serializers.HyperlinkedModelSerializer):
