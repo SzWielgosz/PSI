@@ -1,7 +1,7 @@
-from .models import WorkerAddress, Worker, Shift, ShiftAssignment
+from .models import *
 from rest_framework import serializers
 
-class WorkerAddressSerializer(serializers.HyperlinkedModelSerializer):
+class WorkerAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkerAddress
         fields = [
@@ -13,7 +13,7 @@ class WorkerAddressSerializer(serializers.HyperlinkedModelSerializer):
             'worker'
         ]
 
-class WorkerSerializer(serializers.HyperlinkedModelSerializer):
+class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worker
         fields = [
@@ -24,7 +24,7 @@ class WorkerSerializer(serializers.HyperlinkedModelSerializer):
             'pesel'
         ]
 
-class ShiftSerializer(serializers.HyperlinkedModelSerializer):
+class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
         fields = [
@@ -33,10 +33,52 @@ class ShiftSerializer(serializers.HyperlinkedModelSerializer):
             'description'
         ]
 
-class ShiftAssigmentSerializer(serializers.HyperlinkedModelSerializer):
+class ShiftAssigmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShiftAssignment
         fields = [
             'worker',
             'shift'
+        ]
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = [
+            'price',
+            'zone',
+            'dateOfPurchase',
+            'dateOfEnd',
+            'worker'
+        ]
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = [
+            'name',
+            'surname',
+            'phoneNumber',
+            'email',
+            'pesel'
+        ]
+
+class ClientAdressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientAdress
+        fields = [
+            'street',
+            'houseNumber',
+            'flatNumber',
+            'postcode',
+            'placeName',
+            'client'
+        ]
+
+class TicketAssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = [
+            'ticket',
+            'client'
         ]

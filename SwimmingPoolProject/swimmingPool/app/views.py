@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import WorkerAddress, Worker, Shift, ShiftAssignment
+from .models import *
 from rest_framework import viewsets
-from .serializers import WorkerAddressSerializer, WorkerSerializer, ShiftSerializer, ShiftAssigmentSerializer
+from .serializers import *
 
 def index(request):
     return HttpResponse("<h1>Default_view</h1>")
@@ -26,4 +26,24 @@ class ShiftViewSet(viewsets.ModelViewSet):
 class ShiftAssigmentViewSet(viewsets.ModelViewSet):
     queryset = ShiftAssignment.objects.all()
     serializer_class = ShiftAssigmentSerializer
+
+
+class TicketViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+
+class ClientAdressViewSet(viewsets.ModelViewSet):
+    queryset = ClientAdress.objects.all()
+    serializer_class = ClientAdressSerializer
+
+
+class TicketAssignmentViewSet(viewsets.ModelViewSet):
+    queryset = TicketAssignment.objects.all()
+    serializer_class = TicketAssignmentSerializer
 
