@@ -1,6 +1,7 @@
 from .models import *
 from rest_framework import serializers
 
+
 class WorkerAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkerAddress
@@ -21,6 +22,7 @@ class WorkerAddressSerializer(serializers.ModelSerializer):
         if number < 0:
             raise serializers.ValidationError("Numer nie moze byc ujemny!")
         return number
+
 
 class WorkerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,6 +63,7 @@ class WorkerSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError('Niepoprawny pesel')
         return pesel
 
+
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
@@ -80,14 +83,6 @@ class ShiftSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Data początku jest późniejsza niż rozpoczęcia')
         return data
 
-
-class ShiftAssigmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShiftAssignment
-        fields = [
-            'worker',
-            'shift'
-        ]
 
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
@@ -161,6 +156,7 @@ class ClientSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError('Niepoprawny pesel')
         return pesel
 
+
 class ClientAdressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientAdress
@@ -182,11 +178,3 @@ class ClientAdressSerializer(serializers.ModelSerializer):
         if number < 0:
             raise serializers.ValidationError("Numer nie moze byc ujemny!")
         return number
-
-class TicketAssignmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        fields = [
-            'ticket',
-            'client'
-        ]

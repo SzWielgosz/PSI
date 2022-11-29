@@ -23,11 +23,6 @@ class ShiftViewSet(viewsets.ModelViewSet):
     serializer_class = ShiftSerializer
 
 
-class ShiftAssigmentViewSet(viewsets.ModelViewSet):
-    queryset = ShiftAssignment.objects.all()
-    serializer_class = ShiftAssigmentSerializer
-
-
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
@@ -41,9 +36,3 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ClientAdressViewSet(viewsets.ModelViewSet):
     queryset = ClientAdress.objects.all()
     serializer_class = ClientAdressSerializer
-
-
-class TicketAssignmentViewSet(viewsets.ModelViewSet):
-    queryset = TicketAssignment.objects.all()
-    serializer_class = TicketAssignmentSerializer
-

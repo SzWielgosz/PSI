@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'swimmingPool.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'swimmingpool_database',
+        'NAME': 'swimmingpool_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST':'localhost',

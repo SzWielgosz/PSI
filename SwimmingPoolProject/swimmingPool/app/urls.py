@@ -22,11 +22,9 @@ router = routers.DefaultRouter()
 router.register(r'workers', views.WorkerViewSet)
 router.register(r'workersAddresses', views.WorkerAddressViewSet)
 router.register(r'shifts', views.ShiftViewSet)
-router.register(r'shiftsAssigments', views.ShiftAssigmentViewSet)
 router.register(r'tickets', views.TicketViewSet)
 router.register(r'clients', views.ClientViewSet)
 router.register(r'clientsAddresses', views.ClientAdressViewSet)
-router.register(r'ticketsAssignments', views.TicketAssignmentViewSet)
 
 urlpatterns = [
     path('', views.index, name="index"),
