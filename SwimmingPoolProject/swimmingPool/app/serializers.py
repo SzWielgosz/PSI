@@ -64,11 +64,22 @@ class WorkerSerializer(serializers.ModelSerializer):
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = [
-            'startTime',
-            'endTime',
-            'description'
-        ]
+        fields = '__all__'
+
+    startTime = serializers.DateTimeField()
+    endTime = serializers.DateTimeField()
+    description = serializers.CharField()
+
+    def validate(self, data):
+        startTime = data['startTime']
+        endTime = data['endTime']
+
+        if startTime == endTime:
+            raise serializers.ValidationError('Data początku nie może być datą zakończenia')
+        if startTime > endTime:
+            raise serializers.ValidationError('Data początku jest późniejsza niż rozpoczęcia')
+        return data
+
 
 class ShiftAssigmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -88,6 +99,18 @@ class TicketSerializer(serializers.ModelSerializer):
             'dateOfEnd',
             'worker'
         ]
+        dateOfEnd = serializers.DateTimeField()
+        dateOfPurchase = serializers.DateTimeField()
+
+    def validate(self, data):
+        endDate = data['dateOfEnd']
+        startTime = data['dateOfPurchase']
+        if endDate == startTime:
+            raise serializers.ValidationError('Data zakończenia taka sama jak zakupu')
+        if endDate < startTime:
+            raise  serializers.ValidationError('Data zakończenia wcześniejsza niż zakupu')
+        return data
+
     def validate_price(self, price):
         price = str(price)
         if len(price.rsplit('.')[-1]) > 2:

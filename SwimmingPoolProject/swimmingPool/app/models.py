@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -18,10 +20,15 @@ class WorkerAddress(models.Model):
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, default=1)
 
 
+SHIFTS_CHOICES = (
+    ("FIRST_SHIFT", "1 zmiana"),
+    ("SECOND_SHIFT", "2 zmiana")
+)
+
 class Shift(models.Model):
     startTime = models.DateTimeField(null=False)
     endTime = models.DateTimeField(null=False)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=12, choices=SHIFTS_CHOICES)
 
 
 class ShiftAssignment(models.Model):
@@ -32,7 +39,7 @@ class ShiftAssignment(models.Model):
 class Ticket(models.Model):
     price = models.FloatField(null=False)
     zone = models.CharField(max_length=45, null=False)
-    dateOfPurchase = models.DateTimeField(null=False)
+    dateOfPurchase = models.DateTimeField(null=False, default=datetime.datetime.now())
     dateOfEnd = models.DateTimeField(null=False)
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
 
