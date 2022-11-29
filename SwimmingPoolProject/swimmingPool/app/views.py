@@ -33,6 +33,6 @@ class ClientViewSet(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
 
 
-class ClientAdressViewSet(viewsets.ModelViewSet):
-    queryset = ClientAdress.objects.all()
-    serializer_class = ClientAdressSerializer
+class ClientAddressViewSet(viewsets.ModelViewSet):
+    queryset = ClientAddress.objects.all()
+    serializer_class = ClientAddressSerializer

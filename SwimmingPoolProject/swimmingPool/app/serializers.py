@@ -157,9 +157,9 @@ class ClientSerializer(serializers.ModelSerializer):
         return pesel
 
 
-class ClientAdressSerializer(serializers.ModelSerializer):
+class ClientAddressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ClientAdress
+        model = ClientAddress
         fields = [
             'street',
             'houseNumber',

@@ -6,11 +6,27 @@ from .models import *
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'surname']
 
-admin.site.register(WorkerAddress)
-admin.site.register(Client)
-admin.site.register(ClientAdress)
-admin.site.register(Shift)
+
+@admin.register(WorkerAddress)
+class WorkerAddress(admin.ModelAdmin):
+    list_display = ['id', 'worker']
+
+
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'surname']
+
+
+@admin.register(ClientAddress)
+class ClientAddressAdmin(admin.ModelAdmin):
+    list_display = ['id', 'client']
+
+
+@admin.register(Shift)
+class ShiftAdmin(admin.ModelAdmin):
+    list_display = ['description', 'worker']
+
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ['zone', 'worker']
+    list_display = ['id', 'client', 'worker']
