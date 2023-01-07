@@ -1,38 +1,59 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
-from rest_framework import viewsets
+from rest_framework import permissions
 from .serializers import *
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 def index(request):
     return HttpResponse("<h1>Default_view</h1>")
 
 
-class WorkerAddressViewSet(viewsets.ModelViewSet):
-    queryset = WorkerAddress.objects.all()
-    serializer_class = WorkerAddressSerializer
+class WorkerAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, format=None):
+        names = [worker.name for worker in Worker.objects.all()]
+        return Response(names)
 
 
-class WorkerViewSet(viewsets.ModelViewSet):
-    queryset = Worker.objects.all()
-    serializer_class = WorkerSerializer
+class WorkerAddressAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, format=None):
+        addresses = [workerAddress.street for workerAddress in WorkerAddress.objects.all()]
+        return Response(addresses)
 
 
-class ShiftViewSet(viewsets.ModelViewSet):
-    queryset = Shift.objects.all()
-    serializer_class = ShiftSerializer
+class ShiftAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
 
+    def get(self, request, format=None):
+        shifts = [shift.description for shift in Shift.objects.all()]
+        return Response(shifts)
+#
+#
+class TicketAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
 
-class TicketViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
+    def get(self, request, format=None):
+        tickets = [ticket.zone for ticket in Ticket.objects.all()]
+        return Response(tickets)
+#
+#
+class ClientAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
 
+    def get(self, request, format=None):
+        names = [client.name for client in Client.objects.all()]
+        return Response(names)
+#
+#
+class ClientAddressAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
 
-class ClientViewSet(viewsets.ModelViewSet):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
-
-
-class ClientAddressViewSet(viewsets.ModelViewSet):
-    queryset = ClientAddress.objects.all()
-    serializer_class = ClientAddressSerializer
+    def get(self, request, format=None):
+        addresses = [clientAddress.street for clientAddress in ClientAddress.objects.all()]
+        return Response(addresses)

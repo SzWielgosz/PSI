@@ -16,18 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from rest_framework import routers
 
-router = routers.DefaultRouter()
-router.register(r'workers', views.WorkerViewSet)
-router.register(r'workersAddresses', views.WorkerAddressViewSet)
-router.register(r'shifts', views.ShiftViewSet)
-router.register(r'tickets', views.TicketViewSet)
-router.register(r'clients', views.ClientViewSet)
-router.register(r'clientsAddresses', views.ClientAddressViewSet)
 
 urlpatterns = [
-    path('', views.index, name="index"),
-    path('api/', include(router.urls)),
+    path('', views.index, name='home'),
+
+    path('api/workers/', views.WorkerAPIView.as_view(), name='worker'),
+    path('api/workerAddresses/', views.WorkerAddressAPIView.as_view(), name='workerAddresses'),
+    path('api/shifts/', views.ShiftAPIView.as_view(), name='shifts'),
+    path('api/tickets/', views.TicketAPIView.as_view(), name='tickets'),
+    path('api/clients/', views.ClientAPIView.as_view(), name='clients'),
+    path('api/clientAddresses/', views.ClientAddressAPIView.as_view(), name='clientAddresses'),
+
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
