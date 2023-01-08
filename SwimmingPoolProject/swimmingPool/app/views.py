@@ -14,46 +14,52 @@ def index(request):
 class WorkerAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        names = [worker.name for worker in Worker.objects.all()]
-        return Response(names)
+    def get(self, request):
+        workers = Worker.objects.all()
+        serializer = WorkerSerializer(workers, many=True)
+        return Response(serializer.data)
 
 
 class WorkerAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        addresses = [workerAddress.street for workerAddress in WorkerAddress.objects.all()]
-        return Response(addresses)
+    def get(self, request):
+        adresses = WorkerAddress.objects.all()
+        serializer = WorkerAddressSerializer(adresses, many=True)
+        return Response(serializer.data)
 
 
 class ShiftAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        shifts = [shift.description for shift in Shift.objects.all()]
-        return Response(shifts)
-#
-#
+    def get(self, request):
+        shifts = Shift.objects.all()
+        serializer = WorkerAddressSerializer(shifts, many=True)
+        return Response(serializer.data)
+
+
 class TicketAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        tickets = [ticket.zone for ticket in Ticket.objects.all()]
-        return Response(tickets)
-#
-#
+    def get(self, request):
+        tickets = Ticket.objects.all()
+        serializer = TicketSerializer(tickets, many=True)
+        return Response(serializer.data)
+
+
 class ClientAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        names = [client.name for client in Client.objects.all()]
-        return Response(names)
-#
-#
+    def get(self, request):
+        clients = Client.objects.all()
+        serializer = ClientSerializer(clients, many=True)
+        return Response(serializer.data)
+
+
 class ClientAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, format=None):
-        addresses = [clientAddress.street for clientAddress in ClientAddress.objects.all()]
-        return Response(addresses)
+    def get(self, request):
+        adresses = ClientAddress.objects.all()
+        serializer = ClientAddressSerializer(adresses, many=True)
+        return Response(serializer.data)
