@@ -19,14 +19,30 @@ class WorkerAPIView(APIView):
         serializer = WorkerSerializer(workers, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = WorkerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
 
 class WorkerAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
-        adresses = WorkerAddress.objects.all()
-        serializer = WorkerAddressSerializer(adresses, many=True)
+        addresses = WorkerAddress.objects.all()
+        serializer = WorkerAddressSerializer(addresses, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = WorkerAddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
 
 
 class ShiftAPIView(APIView):
@@ -37,14 +53,30 @@ class ShiftAPIView(APIView):
         serializer = WorkerAddressSerializer(shifts, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = ShiftSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
 
 class TicketAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
 
     def get(self, request):
         tickets = Ticket.objects.all()
         serializer = TicketSerializer(tickets, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TicketSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
 
 
 class ClientAPIView(APIView):
@@ -55,11 +87,27 @@ class ClientAPIView(APIView):
         serializer = ClientSerializer(clients, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        serializer = ClientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
 
 class ClientAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
-        adresses = ClientAddress.objects.all()
-        serializer = ClientAddressSerializer(adresses, many=True)
+        addresses = ClientAddress.objects.all()
+        serializer = ClientAddressSerializer(addresses, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ClientAddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
