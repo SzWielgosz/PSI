@@ -6,7 +6,7 @@ class Worker(models.Model):
     name = models.CharField(max_length=45, null=False)
     surname = models.CharField(max_length=45, null=False)
     phoneNumber = models.CharField(max_length=9, null=False)
-    email = models.EmailField()
+    email = models.EmailField(null=True)
     pesel = models.CharField(max_length=11, null=False)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class WorkerAddress(models.Model):
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, default=None)
     street = models.CharField(max_length=45, null=False)
     houseNumber = models.IntegerField(null=False)
-    flatNumber = models.IntegerField()
+    flatNumber = models.IntegerField(null=True)
     postcode = models.CharField(max_length=11, null=False)
     placeName = models.CharField(max_length=45, null=False)
 
@@ -44,7 +44,7 @@ class Client(models.Model):
     name = models.CharField(max_length=45, null=False)
     surname = models.CharField(max_length=45, null=False)
     phoneNumber = models.CharField(max_length=9, null=False)
-    email = models.EmailField()
+    email = models.EmailField(null=True)
     pesel = models.CharField(max_length=11, null=False)
 
     def __str__(self):
@@ -55,7 +55,7 @@ class ClientAddress(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, default=None)
     street = models.CharField(max_length=45, null=False)
     houseNumber = models.IntegerField(null=False)
-    flatNumber = models.IntegerField()
+    flatNumber = models.IntegerField(null=True)
     postcode = models.CharField(max_length=11, null=False)
     placeName = models.CharField(max_length=45, null=False)
 
