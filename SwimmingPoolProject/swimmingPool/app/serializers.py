@@ -64,6 +64,11 @@ class WorkerSerializer(serializers.ModelSerializer):
 
 
 class ShiftSerializer(serializers.ModelSerializer):
+    worker = serializers.SlugRelatedField(
+        queryset=Worker.objects.all(),
+        slug_field='slugField',
+        validators=[UniqueValidator(queryset=Shift.objects.all())]
+    )
     class Meta:
         model = Shift
         fields = '__all__'
