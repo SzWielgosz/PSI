@@ -27,7 +27,13 @@ urlpatterns = [
     path('api/tickets/', views.TicketAPIView.as_view(), name='tickets'),
     path('api/clients/', views.ClientAPIView.as_view(), name='clients'),
     path('api/clientAddresses/', views.ClientAddressAPIView.as_view(), name='clientAddresses'),
-    path('api/ticketsGeneric/', views.TicketGenericAPIView.as_view(), name='ticketGenericList'),
+
+    path('api/ticketsGeneric/', views.TicketGenericAPIView.as_view(), name='ticketsGenericList'),
+    path('api/workersGeneric/', views.WorkerGenericAPIView.as_view(), name='workersGenericList'),
+    path('api/workerAddressesGeneric/', views.WorkerAddressesGenericAPIView.as_view(), name='workerAddressesGenericList'),
+    path('api/shiftsGeneric/', views.ShiftsGenericAPIView.as_view(), name='shiftsGenericList'),
+    path('api/clientsGeneric/', views.ClientsGenericAPIView.as_view(), name='clientsGenericList'),
+    path('api/clientAddressesGeneric/', views.ClientAddressesGenericAPIView.as_view(), name='clientAddressesGenericList'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

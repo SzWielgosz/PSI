@@ -28,6 +28,18 @@ class WorkerAPIView(APIView):
             return Response(serializer.errors)
 
 
+class WorkerGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Worker.objects.all()
+    serializer_class = WorkerSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class WorkerAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -45,6 +57,18 @@ class WorkerAddressAPIView(APIView):
             return Response(serializer.errors)
 
 
+class WorkerAddressesGenericAPIView(mixins.ListModelMixin,mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = WorkerAddress.objects.all()
+    serializer_class = WorkerAddressSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class ShiftAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -60,6 +84,18 @@ class ShiftAPIView(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+
+class ShiftsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Shift.objects.all()
+    serializer_class = ShiftSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class TicketAPIView(APIView):
@@ -109,6 +145,18 @@ class ClientAPIView(APIView):
             return Response(serializer.errors)
 
 
+class ClientsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class ClientAddressAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -126,3 +174,13 @@ class ClientAddressAPIView(APIView):
             return Response(serializer.errors)
 
 
+class ClientAddressesGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = ClientAddress.objects.all()
+    serializer_class = ClientAddressSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
