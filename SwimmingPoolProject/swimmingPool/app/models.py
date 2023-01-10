@@ -8,6 +8,11 @@ class Worker(models.Model):
     phoneNumber = models.CharField(max_length=9, null=False)
     email = models.EmailField(null=True)
     pesel = models.CharField(max_length=11, null=False)
+    slugField = models.SlugField(max_length=500, blank=True, null=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.slugField = f'{self.name} {self.surname}'
+        super(Worker, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.name} {self.surname}'
@@ -40,12 +45,18 @@ class Shift(models.Model):
     def __str__(self):
         return self.description
 
+
 class Client(models.Model):
     name = models.CharField(max_length=45, null=False)
     surname = models.CharField(max_length=45, null=False)
     phoneNumber = models.CharField(max_length=9, null=False)
     email = models.EmailField(null=True)
     pesel = models.CharField(max_length=11, null=False)
+    slugField = models.CharField(max_length=500, blank=True, null=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.slugField = f'{self.name} {self.surname}'
+        super(Client, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.name} {self.surname}'
@@ -55,12 +66,13 @@ class ClientAddress(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, default=None)
     street = models.CharField(max_length=45, null=False)
     houseNumber = models.IntegerField(null=False)
-    flatNumber = models.IntegerField(null=True)
+    flatNumber = models.IntegerField(null=True, blank=True)
     postcode = models.CharField(max_length=11, null=False)
     placeName = models.CharField(max_length=45, null=False)
 
     def __str__(self):
         return f'{self.client}'
+
 
 class Ticket(models.Model):
     worker = models.ForeignKey(Worker, on_delete=models.SET_DEFAULT, default=None)
@@ -69,6 +81,7 @@ class Ticket(models.Model):
     zone = models.CharField(max_length=45, null=False)
     dateOfPurchase = models.DateTimeField(null=False, default=datetime.datetime.now())
     dateOfEnd = models.DateTimeField(null=False)
+
 
     def __str__(self):
         return f'{self.client}'

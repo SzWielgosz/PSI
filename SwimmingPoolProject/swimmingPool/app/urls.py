@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/tickets/', views.TicketAPIView.as_view(), name='tickets'),
     path('api/clients/', views.ClientAPIView.as_view(), name='clients'),
     path('api/clientAddresses/', views.ClientAddressAPIView.as_view(), name='clientAddresses'),
+    path('api/ticketsGeneric/', views.TicketGenericAPIView.as_view(), name='ticketGenericList'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

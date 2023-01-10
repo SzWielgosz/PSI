@@ -5,7 +5,7 @@ from rest_framework import permissions
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework import generics, mixins
 
 def index(request):
     return HttpResponse("<h1>Default_view</h1>")
@@ -79,6 +79,19 @@ class TicketAPIView(APIView):
             return Response(serializer.errors)
 
 
+class TicketGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+
 class ClientAPIView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -111,3 +124,5 @@ class ClientAddressAPIView(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+

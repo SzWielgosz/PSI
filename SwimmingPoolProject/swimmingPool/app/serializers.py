@@ -1,18 +1,21 @@
+from rest_framework.validators import UniqueValidator
+
 from .models import *
 from rest_framework import serializers
 
 
 class WorkerAddressSerializer(serializers.ModelSerializer):
+
+    worker = serializers.SlugRelatedField(
+        queryset=Worker.objects.all(),
+        slug_field='slugField',
+        validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    )
+
     class Meta:
         model = WorkerAddress
-        fields = [
-            'street',
-            'houseNumber',
-            'flatNumber',
-            'postcode',
-            'placeName',
-            'worker'
-        ]
+        fields = '__all__'
+
     def validate_houseNumber(self, number):
         if number < 0:
             raise serializers.ValidationError("Numer nie moze byc ujemny!")
@@ -25,15 +28,11 @@ class WorkerAddressSerializer(serializers.ModelSerializer):
 
 
 class WorkerSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Worker
-        fields = [
-            'name',
-            'surname',
-            'phoneNumber',
-            'email',
-            'pesel'
-        ]
+        fields = '__all__'
+
     def validate_name(self, name):
         return name.title()
 
@@ -85,14 +84,27 @@ class ShiftSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    client = serializers.SlugRelatedField(
+        queryset=Client.objects.all(),
+        slug_field='slugField',
+        validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    )
+
+    worker = serializers.SlugRelatedField(
+        queryset=Worker.objects.all(),
+        slug_field='slugField',
+        validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    )
+
     class Meta:
         model = Ticket
         fields = [
+            'worker',
+            'client',
             'price',
             'zone',
             'dateOfPurchase',
             'dateOfEnd',
-            'worker'
         ]
         dateOfEnd = serializers.DateTimeField()
         dateOfPurchase = serializers.DateTimeField()
@@ -119,13 +131,7 @@ class TicketSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = [
-            'name',
-            'surname',
-            'phoneNumber',
-            'email',
-            'pesel'
-        ]
+        fields = '__all__'
 
     def validate_name(self, name):
         return name.title()
@@ -158,16 +164,16 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ClientAddressSerializer(serializers.ModelSerializer):
+
+    client = serializers.SlugRelatedField(
+        queryset=Client.objects.all(),
+        slug_field='slugField',
+        validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    )
+
     class Meta:
         model = ClientAddress
-        fields = [
-            'street',
-            'houseNumber',
-            'flatNumber',
-            'postcode',
-            'placeName',
-            'client'
-        ]
+        fields = '__all__'
 
     def validate_houseNumber(self, number):
         if number < 0:
