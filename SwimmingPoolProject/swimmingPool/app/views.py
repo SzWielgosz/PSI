@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
-from rest_framework import permissions
+from rest_framework import permissions, filters
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,6 +33,10 @@ class WorkerGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, gener
     serializer_class = WorkerSerializer
     permission_classes = [permissions.IsAdminUser]
 
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'surname', 'phoneNumber', 'email', 'pesel']
+    ordering_fields = ['surname', 'name']
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -61,6 +65,10 @@ class WorkerAddressesGenericAPIView(mixins.ListModelMixin,mixins.CreateModelMixi
     queryset = WorkerAddress.objects.all()
     serializer_class = WorkerAddressSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['houseNumber', 'flatNumber', 'postcode', 'placeName']
+    ordering_fields = ['worker', 'street', 'placeName']
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -91,6 +99,10 @@ class ShiftsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, gener
     serializer_class = ShiftSerializer
     permission_classes = [permissions.IsAdminUser]
 
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['startTime', 'endTime', 'description']
+    ordering_fields = ['startTime', 'endTime', 'description']
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -119,6 +131,10 @@ class TicketGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, gener
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['price', 'zone', 'dateOfPurchase', 'dateOfEnd']
+    ordering_fields = ['price', 'dateOfPurchase', 'dateOfEnd']
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -150,6 +166,10 @@ class ClientsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, gene
     serializer_class = ClientSerializer
     permission_classes = [permissions.IsAdminUser]
 
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'surname', 'phoneNumber', 'email', 'pesel']
+    ordering_fields = ['name', 'surname']
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -178,6 +198,10 @@ class ClientAddressesGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMix
     queryset = ClientAddress.objects.all()
     serializer_class = ClientAddressSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['houseNumber', 'flatNumber', 'postcode', 'placeName']
+    ordering_fields = ['postcode', 'placeName', 'client', 'street']
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
