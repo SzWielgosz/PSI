@@ -110,6 +110,17 @@ class ShiftsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, gener
         return self.create(request, *args, **kwargs)
 
 
+class ShiftsFilter(generics.GenericAPIView, mixins.ListModelMixin):
+    serializer_class = ShiftSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        name = self.kwargs['name']
+        return Shift.objects.filter(worker__name=name)
+
+
 class TicketAPIView(APIView):
     permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
 

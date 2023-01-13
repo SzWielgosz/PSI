@@ -35,5 +35,7 @@ urlpatterns = [
     path('api/clientsGeneric/', views.ClientsGenericAPIView.as_view(), name='clientsGenericList'),
     path('api/clientAddressesGeneric/', views.ClientAddressesGenericAPIView.as_view(), name='clientAddressesGenericList'),
 
+    path('api/shiftsFilter/<str:name>', views.ShiftsFilter.as_view(), name='shiftFilter'),
+
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
