@@ -39,8 +39,13 @@ class Shift(models.Model):
 
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, default=None)
     startTime = models.DateTimeField(null=False)
-    endTime = models.DateTimeField(null=False)
+    endTime = models.DateTimeField(null=True, blank=True, editable=False)
     description = models.CharField(max_length=12, choices=SHIFTS_CHOICES)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.endTime = self.startTime + datetime.timedelta(hours=8)
+        super(Shift, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.description
@@ -86,8 +91,13 @@ class Ticket(models.Model):
     client = models.ForeignKey(Client, on_delete=models.SET_DEFAULT, default=None)
     price = models.FloatField(null=False)
     zone = models.CharField(max_length=45, null=False, choices=TICKET_CHOICES)
-    dateOfPurchase = models.DateTimeField(null=False, default=datetime.datetime.now())
-    dateOfEnd = models.DateTimeField(null=False)
+    dateOfPurchase = models.DateTimeField(null=False, default=datetime.datetime.now(), editable=False)
+    dateOfEnd = models.DateTimeField(null=True, blank=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.dateOfEnd = self.dateOfPurchase + datetime.timedelta(hours=1)
+        super(Ticket, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.client}'

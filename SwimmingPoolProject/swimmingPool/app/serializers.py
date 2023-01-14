@@ -1,5 +1,3 @@
-from rest_framework.validators import UniqueValidator
-
 from .models import *
 from rest_framework import serializers
 
@@ -11,7 +9,7 @@ class WorkerAddressSerializer(serializers.ModelSerializer):
     #     slug_field='slugField',
     #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
     # )
-    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=True)
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
 
     class Meta:
         model = WorkerAddress
@@ -83,11 +81,14 @@ class ShiftSerializer(serializers.ModelSerializer):
     #     validators=[UniqueValidator(queryset=Shift.objects.all())]
     # )
 
-    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=True)
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
+
+    startTime = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S%z')
 
     class Meta:
         model = Shift
-        fields = ['worker',
+        fields = ['id',
+                  'worker',
                   'startTime',
                   'endTime',
                   'description',
@@ -95,12 +96,12 @@ class ShiftSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         startTime = data['startTime']
-        endTime = data['endTime']
+        start = startTime.strftime('%Y-%m-%dT%H:%M:%S%z')
+        now = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
 
-        if startTime == endTime:
-            raise serializers.ValidationError('Data początku nie może być datą zakończenia')
-        if startTime > endTime:
-            raise serializers.ValidationError('Data początku jest późniejsza niż rozpoczęcia')
+        if start < now:
+            raise serializers.ValidationError('Data początku musi byc data terazniejsza lub przyszla')
+
         return data
 
 
@@ -111,6 +112,7 @@ class ClientSerializer(serializers.ModelSerializer):
         read_only=True,
         view_name='ticket-detail'
     )
+
 
     class Meta:
         model = Client
@@ -154,7 +156,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ClientAddressSerializer(serializers.ModelSerializer):
-    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=True)
+    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=False, queryset=Client.objects.all())
 
     # client = serializers.SlugRelatedField(
     #     queryset=Client.objects.all(),
@@ -195,8 +197,9 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
     #     slug_field='slugField',
     #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
     # )
-    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=True)
-    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=True)
+
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
+    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=False, queryset=Client.objects.all())
 
 
     class Meta:
@@ -204,21 +207,13 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'worker',
             'client',
-            'price',
-            'zone',
             'dateOfPurchase',
             'dateOfEnd',
+            'price',
+            'zone',
             'url',
         ]
 
-    def validate(self, data):
-        endDate = data['dateOfEnd']
-        startTime = data['dateOfPurchase']
-        if endDate == startTime:
-            raise serializers.ValidationError('Data zakończenia taka sama jak zakupu')
-        if endDate < startTime:
-            raise  serializers.ValidationError('Data zakończenia wcześniejsza niż zakupu')
-        return data
 
     def validate_price(self, price):
         price = str(price)
@@ -228,5 +223,3 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
         if price < 0:
             raise serializers.ValidationError("Cena nie moze byc ujemna")
         return price
-
-

@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins
 from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
-from .custom_permissions import IsCurrentUserOwnerOrReadOnly
 from rest_framework import permissions
 
 
@@ -23,13 +22,14 @@ class WorkerList(generics.ListCreateAPIView):
     filterset_fields = ['name']
     search_fields = ['name']
     ordering_fields = ['name']
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class WorkerDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
     name = 'worker-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class WorkerAddressFilter(FilterSet):
@@ -50,13 +50,14 @@ class WorkerAddressList(generics.ListCreateAPIView):
     filterset_class = WorkerAddressFilter
     search_fields = ['postcode', 'street']
     ordering_fields = ['phoneNumber']
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class WorkerAddressDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = WorkerAddress.objects.all()
     name = 'workeraddress-detail'
     serializer_class = WorkerAddressSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ShiftFilter(FilterSet):
@@ -77,13 +78,14 @@ class ShiftList(generics.ListCreateAPIView):
     filterset_class = ShiftFilter
     search_fields = ['worker', 'startTime', 'endTime']
     ordering_fields = ['worker']
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ShiftDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
     name = "shift-detail"
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ClientList(generics.ListCreateAPIView):
@@ -93,13 +95,15 @@ class ClientList(generics.ListCreateAPIView):
     search_fields = ['name', 'surname', 'phoneNumber']
     ordering_fields = ['phoneNumber']
     name = 'client-list'
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+
 
 
 class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     name = 'client-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ClientAddressFilter(FilterSet):
@@ -120,13 +124,14 @@ class ClientAddressList(generics.ListCreateAPIView):
     filterset_class = ClientAddressFilter
     search_fields = ['postcode', 'street']
     ordering_fields = ['phoneNumber']
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ClientAddressDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ClientAddress.objects.all()
     serializer_class = ClientAddressSerializer
     name = 'clientaddress-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class TicketFilter(FilterSet):
@@ -145,9 +150,9 @@ class TicketFilter(FilterSet):
 class TicketList(generics.ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOwnerOrReadOnly)
     filterset_class = TicketFilter
     name = 'ticket-list'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
     search_fields = ['price', 'zone', 'dateOfEnd']
     ordering_fields = ['price', 'zone', 'dateofPurchase', 'dateOfEnd']
@@ -157,6 +162,7 @@ class TicketDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     name = 'ticket-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
 class ApiRoot(generics.GenericAPIView):
