@@ -1,20 +1,25 @@
-from rest_framework.validators import UniqueValidator
-
 from .models import *
 from rest_framework import serializers
 
 
 class WorkerAddressSerializer(serializers.ModelSerializer):
 
-    worker = serializers.SlugRelatedField(
-        queryset=Worker.objects.all(),
-        slug_field='slugField',
-        validators=[UniqueValidator(queryset=Ticket.objects.all())]
-    )
+    # worker = serializers.SlugRelatedField(
+    #     queryset=Worker.objects.all(),
+    #     slug_field='slugField',
+    #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    # )
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
 
     class Meta:
         model = WorkerAddress
-        fields = '__all__'
+        fields = ['worker',
+                  'street',
+                  'houseNumber',
+                  'flatNumber',
+                  'postcode',
+                  'placeName',
+                  'url']
 
     def validate_houseNumber(self, number):
         if number < 0:
@@ -27,11 +32,17 @@ class WorkerAddressSerializer(serializers.ModelSerializer):
         return number
 
 
-class WorkerSerializer(serializers.ModelSerializer):
+class WorkerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Worker
-        fields = '__all__'
+        fields = ['id',
+                  'name',
+                  'surname',
+                  'phoneNumber',
+                  'email',
+                  'pesel',
+                  'url',]
 
     def validate_name(self, name):
         return name.title()
@@ -64,79 +75,55 @@ class WorkerSerializer(serializers.ModelSerializer):
 
 
 class ShiftSerializer(serializers.ModelSerializer):
-    worker = serializers.SlugRelatedField(
-        queryset=Worker.objects.all(),
-        slug_field='slugField',
-        validators=[UniqueValidator(queryset=Shift.objects.all())]
-    )
+    # worker = serializers.SlugRelatedField(
+    #     queryset=Worker.objects.all(),
+    #     slug_field='slugField',
+    #     validators=[UniqueValidator(queryset=Shift.objects.all())]
+    # )
+
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
+
+    startTime = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S%z')
+
     class Meta:
         model = Shift
-        fields = '__all__'
-
-    startTime = serializers.DateTimeField()
-    endTime = serializers.DateTimeField()
-    description = serializers.CharField()
+        fields = ['id',
+                  'worker',
+                  'startTime',
+                  'endTime',
+                  'description',
+                  'url']
 
     def validate(self, data):
         startTime = data['startTime']
-        endTime = data['endTime']
+        start = startTime.strftime('%Y-%m-%dT%H:%M:%S%z')
+        now = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
 
-        if startTime == endTime:
-            raise serializers.ValidationError('Data początku nie może być datą zakończenia')
-        if startTime > endTime:
-            raise serializers.ValidationError('Data początku jest późniejsza niż rozpoczęcia')
+        if start < now:
+            raise serializers.ValidationError('Data początku musi byc data terazniejsza lub przyszla')
+
         return data
-
-
-class TicketSerializer(serializers.ModelSerializer):
-    client = serializers.SlugRelatedField(
-        queryset=Client.objects.all(),
-        slug_field='slugField',
-        validators=[UniqueValidator(queryset=Ticket.objects.all())]
-    )
-
-    worker = serializers.SlugRelatedField(
-        queryset=Worker.objects.all(),
-        slug_field='slugField',
-        validators=[UniqueValidator(queryset=Ticket.objects.all())]
-    )
-
-    class Meta:
-        model = Ticket
-        fields = [
-            'worker',
-            'client',
-            'price',
-            'zone',
-            'dateOfPurchase',
-            'dateOfEnd',
-        ]
-        dateOfEnd = serializers.DateTimeField()
-        dateOfPurchase = serializers.DateTimeField()
-
-    def validate(self, data):
-        endDate = data['dateOfEnd']
-        startTime = data['dateOfPurchase']
-        if endDate == startTime:
-            raise serializers.ValidationError('Data zakończenia taka sama jak zakupu')
-        if endDate < startTime:
-            raise  serializers.ValidationError('Data zakończenia wcześniejsza niż zakupu')
-        return data
-
-    def validate_price(self, price):
-        price = str(price)
-        if len(price.rsplit('.')[-1]) > 2:
-            raise serializers.ValidationError("Cena nie moze miec wiecej niz 2 miejsca po przecinku")
-        price = float(price)
-        if price < 0:
-            raise serializers.ValidationError("Cena nie moze byc ujemna")
-        return price
 
 
 class ClientSerializer(serializers.ModelSerializer):
+
+    tickets = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='ticket-detail'
+    )
+
+
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = ['id',
+                  'name',
+                  'surname',
+                  'phoneNumber',
+                  'email',
+                  'pesel',
+                  'url',
+                  'tickets']
 
     def validate_name(self, name):
         return name.title()
@@ -169,16 +156,23 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ClientAddressSerializer(serializers.ModelSerializer):
+    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=False, queryset=Client.objects.all())
 
-    client = serializers.SlugRelatedField(
-        queryset=Client.objects.all(),
-        slug_field='slugField',
-        validators=[UniqueValidator(queryset=Ticket.objects.all())]
-    )
+    # client = serializers.SlugRelatedField(
+    #     queryset=Client.objects.all(),
+    #     slug_field='slugField',
+    #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    # )
 
     class Meta:
         model = ClientAddress
-        fields = '__all__'
+        fields = ['client',
+                  'street',
+                  'houseNumber',
+                  'flatNumber',
+                  'postcode',
+                  'placeName',
+                  'url']
 
     def validate_houseNumber(self, number):
         if number < 0:
@@ -189,3 +183,43 @@ class ClientAddressSerializer(serializers.ModelSerializer):
         if number < 0:
             raise serializers.ValidationError("Numer nie moze byc ujemny!")
         return number
+
+
+class TicketSerializer(serializers.HyperlinkedModelSerializer):
+    # client = serializers.SlugRelatedField(
+    #     queryset=Client.objects.all(),
+    #     slug_field='slugField',
+    #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    # )
+    #
+    # worker = serializers.SlugRelatedField(
+    #     queryset=Worker.objects.all(),
+    #     slug_field='slugField',
+    #     validators=[UniqueValidator(queryset=Ticket.objects.all())]
+    # )
+
+    worker = serializers.HyperlinkedRelatedField(view_name='worker-detail', read_only=False, queryset=Worker.objects.all())
+    client = serializers.HyperlinkedRelatedField(view_name='client-detail', read_only=False, queryset=Client.objects.all())
+
+
+    class Meta:
+        model = Ticket
+        fields = [
+            'worker',
+            'client',
+            'dateOfPurchase',
+            'dateOfEnd',
+            'price',
+            'zone',
+            'url',
+        ]
+
+
+    def validate_price(self, price):
+        price = str(price)
+        if len(price.rsplit('.')[-1]) > 2:
+            raise serializers.ValidationError("Cena nie moze miec wiecej niz 2 miejsca po przecinku")
+        price = float(price)
+        if price < 0:
+            raise serializers.ValidationError("Cena nie moze byc ujemna")
+        return price

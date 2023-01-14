@@ -3,219 +3,176 @@ from django.http import HttpResponse
 from .models import *
 from rest_framework import permissions, filters
 from .serializers import *
+from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, mixins
+from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
+from rest_framework import permissions
+
 
 def index(request):
     return HttpResponse("<h1>Default_view</h1>")
 
 
-class WorkerAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        workers = Worker.objects.all()
-        serializer = WorkerSerializer(workers, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = WorkerSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-
-class WorkerGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+class WorkerList(generics.ListCreateAPIView):
     queryset = Worker.objects.all()
     serializer_class = WorkerSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name', 'surname', 'phoneNumber', 'email', 'pesel']
-    ordering_fields = ['surname', 'name']
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    name = 'worker-list'
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class WorkerAddressAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        addresses = WorkerAddress.objects.all()
-        serializer = WorkerAddressSerializer(addresses, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = WorkerAddressSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+class WorkerDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Worker.objects.all()
+    serializer_class = WorkerSerializer
+    name = 'worker-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class WorkerAddressesGenericAPIView(mixins.ListModelMixin,mixins.CreateModelMixin, generics.GenericAPIView):
+class WorkerAddressFilter(FilterSet):
+    from_houseNumber = NumberFilter(field_name='houseNumber', lookup_expr='gte')
+    to_houseNumber = NumberFilter(field_name='houseNumber', lookup_expr='lte')
+    from_flatNumber = NumberFilter(field_name='flatNumber', lookup_expr='gte')
+    to_flatNumber = NumberFilter(field_name='flatNumber', lookup_expr='lte')
+
+    class Meta:
+        model = WorkerAddress
+        fields = ['from_houseNumber', 'to_houseNumber', 'from_flatNumber', 'to_flatNumber']
+
+
+class WorkerAddressList(generics.ListCreateAPIView):
     queryset = WorkerAddress.objects.all()
     serializer_class = WorkerAddressSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['houseNumber', 'flatNumber', 'postcode', 'placeName']
-    ordering_fields = ['worker', 'street', 'placeName']
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    name = 'workeraddress-list'
+    filterset_class = WorkerAddressFilter
+    search_fields = ['postcode', 'street']
+    ordering_fields = ['phoneNumber']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class ShiftAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        shifts = Shift.objects.all()
-        serializer = WorkerAddressSerializer(shifts, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ShiftSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+class WorkerAddressDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WorkerAddress.objects.all()
+    name = 'workeraddress-detail'
+    serializer_class = WorkerAddressSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class ShiftsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+class ShiftFilter(FilterSet):
+    from_startTime = DateTimeFilter(field_name='startTime', lookup_expr='gte')
+    to_startTime = DateTimeFilter(field_name='startTime', lookup_expr='lte')
+    from_endTime = DateTimeFilter(field_name='endTime', lookup_expr='gte')
+    to_endTime = DateTimeFilter(field_name='endTime', lookup_expr='lte')
+
+    class Meta:
+        model = Shift
+        fields = ['from_startTime', 'to_startTime', 'from_endTime', 'to_endTime']
+
+
+class ShiftList(generics.ListCreateAPIView):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['startTime', 'endTime', 'description']
-    ordering_fields = ['startTime', 'endTime', 'description']
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    name = 'shift-list'
+    filterset_class = ShiftFilter
+    search_fields = ['worker', 'startTime', 'endTime']
+    ordering_fields = ['worker']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class ShiftsFilter(generics.GenericAPIView, mixins.ListModelMixin):
+class ShiftDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def get_queryset(self):
-        name = self.kwargs['name']
-        return Shift.objects.filter(worker__name=name)
+    name = "shift-detail"
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class TicketAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
-
-    def get(self, request):
-        tickets = Ticket.objects.all()
-        serializer = TicketSerializer(tickets, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = TicketSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-
-class TicketGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['price', 'zone', 'dateOfPurchase', 'dateOfEnd']
-    ordering_fields = ['price', 'dateOfPurchase', 'dateOfEnd']
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
-
-class ClientAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        clients = Client.objects.all()
-        serializer = ClientSerializer(clients, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ClientSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-
-class ClientsGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+class ClientList(generics.ListCreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name', 'surname', 'phoneNumber', 'email', 'pesel']
-    ordering_fields = ['name', 'surname']
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    filterset_fields = ['name', 'surname', 'phoneNumber']
+    search_fields = ['name', 'surname', 'phoneNumber']
+    ordering_fields = ['phoneNumber']
+    name = 'client-list'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class ClientAddressAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request):
-        addresses = ClientAddress.objects.all()
-        serializer = ClientAddressSerializer(addresses, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ClientAddressSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    name = 'client-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
 
-class ClientAddressesGenericAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+class ClientAddressFilter(FilterSet):
+    from_houseNumber = NumberFilter(field_name='houseNumber', lookup_expr='gte')
+    to_houseNumber = NumberFilter(field_name='houseNumber', lookup_expr='lte')
+    from_flatNumber = NumberFilter(field_name='flatNumber', lookup_expr='gte')
+    to_flatNumber = NumberFilter(field_name='flatNumber', lookup_expr='lte')
+
+    class Meta:
+        model = ClientAddress
+        fields = ['from_houseNumber', 'to_houseNumber', 'from_flatNumber', 'to_flatNumber']
+
+
+class ClientAddressList(generics.ListCreateAPIView):
     queryset = ClientAddress.objects.all()
     serializer_class = ClientAddressSerializer
-    permission_classes = [permissions.IsAdminUser]
+    name = 'clientaddress-list'
+    filterset_class = ClientAddressFilter
+    search_fields = ['postcode', 'street']
+    ordering_fields = ['phoneNumber']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['houseNumber', 'flatNumber', 'postcode', 'placeName']
-    ordering_fields = ['postcode', 'placeName', 'client', 'street']
+
+class ClientAddressDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ClientAddress.objects.all()
+    serializer_class = ClientAddressSerializer
+    name = 'clientaddress-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+
+
+class TicketFilter(FilterSet):
+    from_date_purchase = DateTimeFilter(field_name='dateOfPurchase', lookup_expr='gte')
+    to_date_purchase = DateTimeFilter(field_name='dateOfPurchase', lookup_expr='lte')
+    from_date_end = DateTimeFilter(field_name='dateOfEnd', lookup_expr='gte')
+    to_date_end = DateTimeFilter(field_name='dateOfEnd', lookup_expr='lte')
+    from_price = NumberFilter(field_name='price', lookup_expr='gte')
+    to_price = NumberFilter(field_name='price', lookup_expr='lte')
+
+    class Meta:
+        model = Ticket
+        fields = ['from_date_purchase', 'to_date_purchase', 'from_date_end', 'to_date_end', 'from_price', 'to_price']
+
+
+class TicketList(generics.ListCreateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    filterset_class = TicketFilter
+    name = 'ticket-list'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+
+    search_fields = ['price', 'zone', 'dateOfEnd']
+    ordering_fields = ['price', 'zone', 'dateofPurchase', 'dateOfEnd']
+
+
+class TicketDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    name = 'ticket-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
+
+
+class ApiRoot(generics.GenericAPIView):
+    name = 'api-root'
 
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        return Response({'workers': reverse(WorkerList.name, request=request),
+                         'workerAddresses': reverse(WorkerAddressList.name, request=request),
+                         'shifts': reverse(ShiftList.name, request=request),
+                         'clients': reverse(ClientList.name, request=request),
+                         'clientAddresses': reverse(ClientAddressList.name, request=request),
+                         'tickets': reverse(TicketList.name, request=request)
+        })

@@ -19,21 +19,21 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index, name='home'),
 
-    path('api/workers/', views.WorkerAPIView.as_view(), name='worker'),
-    path('api/workerAddresses/', views.WorkerAddressAPIView.as_view(), name='workerAddresses'),
-    path('api/shifts/', views.ShiftAPIView.as_view(), name='shifts'),
-    path('api/tickets/', views.TicketAPIView.as_view(), name='tickets'),
-    path('api/clients/', views.ClientAPIView.as_view(), name='clients'),
-    path('api/clientAddresses/', views.ClientAddressAPIView.as_view(), name='clientAddresses'),
+    path('api/workers/', views.WorkerList.as_view(), name=views.WorkerList.name),
+    path('api/workers/<int:pk>', views.WorkerDetail.as_view(), name=views.WorkerDetail.name),
+    path('api/workerAddresses/', views.WorkerAddressList.as_view(), name=views.WorkerAddressList.name),
+    path('api/workerAddresses/<int:pk>', views.WorkerAddressDetail.as_view(), name=views.WorkerAddressDetail.name),
+    path('api/shifts/', views.ShiftList.as_view(), name=views.ShiftList.name),
+    path('api/shifts/<int:pk>', views.ShiftDetail.as_view(), name=views.ShiftDetail.name),
+    path('api/tickets/', views.TicketList.as_view(), name=views.TicketList.name),
+    path('api/tickets/<int:pk>', views.TicketDetail.as_view(), name=views.TicketDetail.name),
+    path('api/clients/', views.ClientList.as_view(), name=views.ClientList.name),
+    path('api/clients/<int:pk>', views.ClientDetail.as_view(), name=views.ClientDetail.name),
+    path('api/clientAddresses/', views.ClientAddressList.as_view(), name=views.ClientAddressList.name),
+    path('api/clientAddresses/<int:pk>', views.ClientAddressDetail.as_view(), name=views.ClientAddressDetail.name),
+    path('', views.ApiRoot.as_view(), name=views.ApiRoot.name),
 
-    path('api/ticketsGeneric/', views.TicketGenericAPIView.as_view(), name='ticketsGenericList'),
-    path('api/workersGeneric/', views.WorkerGenericAPIView.as_view(), name='workersGenericList'),
-    path('api/workerAddressesGeneric/', views.WorkerAddressesGenericAPIView.as_view(), name='workerAddressesGenericList'),
-    path('api/shiftsGeneric/', views.ShiftsGenericAPIView.as_view(), name='shiftsGenericList'),
-    path('api/clientsGeneric/', views.ClientsGenericAPIView.as_view(), name='clientsGenericList'),
-    path('api/clientAddressesGeneric/', views.ClientAddressesGenericAPIView.as_view(), name='clientAddressesGenericList'),
 
     path('api/shiftsFilter/<str:name>', views.ShiftsFilter.as_view(), name='shiftFilter'),
 
