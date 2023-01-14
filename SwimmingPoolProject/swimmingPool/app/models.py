@@ -30,13 +30,13 @@ class WorkerAddress(models.Model):
         return f'{self.worker}'
 
 
-SHIFTS_CHOICES = (
-    ("FIRST_SHIFT", "1 zmiana"),
-    ("SECOND_SHIFT", "2 zmiana")
-)
-
-
 class Shift(models.Model):
+
+    SHIFTS_CHOICES = (
+        ("1 zmiana", "1 zmiana"),
+        ("2 zmiana", "2 zmiana")
+    )
+
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, default=None)
     startTime = models.DateTimeField(null=False)
     endTime = models.DateTimeField(null=False)
@@ -75,13 +75,19 @@ class ClientAddress(models.Model):
 
 
 class Ticket(models.Model):
+
+    TICKET_CHOICES = (
+        ("Pływalnia", "Pływalnia"),
+        ("SPA", "SPA"),
+        ("Siłownia", "Siłownia"),
+    )
+
     worker = models.ForeignKey(Worker, on_delete=models.SET_DEFAULT, default=None)
     client = models.ForeignKey(Client, on_delete=models.SET_DEFAULT, default=None)
     price = models.FloatField(null=False)
-    zone = models.CharField(max_length=45, null=False)
+    zone = models.CharField(max_length=45, null=False, choices=TICKET_CHOICES)
     dateOfPurchase = models.DateTimeField(null=False, default=datetime.datetime.now())
     dateOfEnd = models.DateTimeField(null=False)
-
 
     def __str__(self):
         return f'{self.client}'
